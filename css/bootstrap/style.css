@@ -1,0 +1,14 @@
+body {
+  background-color: lightgrey;
+}
+
+#title_holder {
+  display: flex;
+  justify-content: center;
+}
+
+h2 {
+  color:  #000000;
+  margin-bottom: 20px;
+  align-self: center;
+}
