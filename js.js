@@ -1,9 +1,13 @@
 // Create the chart
 var data = []
 
+var iframe = document.createElement('iframe');
+
 // load data and represent it in highmaps
 $(document).ready ( function () {
   init();
+  $('#close').hide();
+
 
   $.ajax({
     type: "GET",
@@ -70,6 +74,12 @@ function init() {
       ['us-ak', 0],
       ['undefined', 0]
   ];
+
+  iframe.id = "job_listings"
+  iframe.height = "500px";
+  iframe.width = "100%";
+  document.body.appendChild(iframe);
+  $('#job_listings').hide();
 }
 
 // Scan through state_count.cv and update the dataset with the number
@@ -96,8 +106,16 @@ function processData(allText) {
   loadHighmaps();
 }
 
-function dummyFunc(state) {
-  alert("dummy func called for state " + state);
+function dummyFunc(state, num_jobs) {
+  var html = "<body><h2>" + state + "</h2><br><h3>" + num_jobs + " running jobs</h3></body>";
+  iframe.src = 'data:text/html;charset=utf-8,' + encodeURI(html);
+  $('#close').fadeIn(3000);
+  $('#job_listings').fadeIn(3000);
+
+  $('#close').click(function() {
+    $('#job_listings').fadeOut(2000);
+    $('#close').fadeOut(2000);
+  });
 }
 
 // Passes the data into highmaps
@@ -106,34 +124,42 @@ function loadHighmaps() {
   Highcharts.mapChart('map_container', {
       chart: {
           backgroundColor: '#c7d2e2',
-          map: 'countries/us/us-all'
+          map: 'countries/us/us-all',
       },
 
       title: {
           text: ''
       },
 
+      mapNavigation: {
+            enabled: true
+      },
+
       plotOptions: {
         series: {
-          events: {
-            click: function (e) {
-                        var text = '<b>Clicked</b><br>State: ' + e.point.name + '<br>Running Jobs:' + e.point.value;
-                        if (!this.chart.clickLabel) {
-                            this.chart.clickLabel = this.chart.renderer.label(text, 0, 250)
-                                .css({
-                                    width: '180px'
-                                })
-                                .add();
-                        } else {
-                            this.chart.clickLabel.attr({
-                                text: text
-                            });
-                        }
-                        dummyFunc(e.point.name);
-                    }
+          point: {
+            events: {
+              click: function(e) {
+                dummyFunc(this.name, e.point.z);
+                var text = '<b>State Selected</b><br>Series: ' + this.series.name +
+                  '<br>Point: ' + this.name,
+                  chart = this.series.chart;
+                if (!chart.clickLabel) {
+                  chart.clickLabel = chart.renderer.label(text, 0, 250)
+                    .css({
+                      width: '180px'
+                    })
+                    .add();
+                } else {
+                  chart.clickLabel.attr({
+                    text: text
+                  });
                 }
+              }
             }
-        },
+          }
+        }
+      },
 
       series: [ {
         states: {
@@ -151,5 +177,7 @@ function loadHighmaps() {
           pointFormat: '{point.properties.hc-a2}: {point.z} running jobs'
         }
       }]
+
+
   });
 }
