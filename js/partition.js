@@ -20,6 +20,25 @@
 * ==========================================================================
 */
 
+
+var num_buttons = 0;
+
+
+$(document).ready ( function () {
+  var delayInMilliseconds = 10000; //10 seconds
+
+  setTimeout(function() {
+    alert("there are " + num_buttons + " buttons on this page");
+  }, delayInMilliseconds);
+
+ //  $.ajax({
+ //    type: "GET",
+ //    url: "state_count.csv",
+ //    dataType: "text",
+ //    success: function(data) {processData(data);}
+ // });
+});
+
 /*
     ID's of important elements on page. This makes it easier to select them by applying them and changing
     them once here instead of having to remember it all the time.
@@ -379,6 +398,7 @@ d3.json("data.json").then( function( data ) {
 	        loop through the nodes array, and if a node is equal to the current depth + 1, append it to the buttons
 	        container to add it as a button to the button list.
 	    */
+      var cur_button_num = 0;
 	    for( let node of d.children )
 	    {
 
@@ -403,6 +423,9 @@ d3.json("data.json").then( function( data ) {
 	                */
 	                var button_added = $( "div#" + buttons_containerID + " button:last" );
 
+                  button_added.prop('id', "button" + cur_button_num);
+                  cur_button_num += 1;
+                  num_buttons = cur_button_num;
 	                /*
 	                    set the value of the button to be equal to the name of the datum
 	                */
@@ -463,6 +486,7 @@ d3.json("data.json").then( function( data ) {
 	        });
 
 	    }
+
 	}
 
 	clicked( root );
