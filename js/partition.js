@@ -25,18 +25,22 @@ var num_buttons = 0;
 
 
 $(document).ready ( function () {
-  var delayInMilliseconds = 10000; //10 seconds
-
+  var delayInMilliseconds = 5000; //10 seconds
   setTimeout(function() {
-    alert("there are " + num_buttons + " buttons on this page");
-  }, delayInMilliseconds);
+    // while(true) {
+      var buttons_container = $( "div#" + buttons_containerID );
+      if( buttons_container.is( ":empty" ) )
+      {
+        console.log("no buttons available.");
+      } else {
+        var cur_button_num = Math.floor((Math.random() * (num_buttons)));
+        console.log("there are " + num_buttons + " buttons on this page. Selecting button " + cur_button_num + ".");
+        var outer_button = $( "#button" + cur_button_num );
+        outer_button.click();
+      }
+    // }
 
- //  $.ajax({
- //    type: "GET",
- //    url: "state_count.csv",
- //    dataType: "text",
- //    success: function(data) {processData(data);}
- // });
+  }, delayInMilliseconds);
 });
 
 /*
