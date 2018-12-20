@@ -75,7 +75,8 @@ function demo () {
       function transitionToOuter() {
         var inner_circle = $( "div#" + sunburst_containerID + " circle:last" );
         inner_circle.click();
-        console.log("after inner circle click");
+
+        console.log("after inner circle click. Inner circle contents: " + inner_circle.text());
       }
     }
   // }
@@ -83,13 +84,21 @@ function demo () {
 
 
 $(document).ready ( function () {
+  // setTimeout( function () {
+  //   // debugger
+  //   $("circle").click();
+  // }, 2000);
+
+  // var inner_circle = $( "div#" + sunburst_containerID + " circle:last" );
+  // inner_circle.click();
+  // console.log("after inner circle click. Inner circle contents: " + inner_circle.text());
   // CHANGE THIS UPON ROLL OUT.
   // 15 minutes?
-  var delayInMilliseconds = 5000; // 5 seconds
-
-  setTimeout(function() {
-    demo();
-  }, delayInMilliseconds);
+  // var delayInMilliseconds = 5000; // 5 seconds
+  //
+  // setTimeout(function() {
+  //   demo();
+  // }, delayInMilliseconds);
 });
 
 /*
@@ -541,8 +550,14 @@ d3.json("data.json").then( function( data ) {
 	    }
 
 	}
-
 	clicked( root );
+
+  setTimeout( function () {
+    // debugger
+    var button = currentArc.children[0];
+    clicked( button );
+    clicked( button.parent);
+  }, 5000);
 
 });
 
