@@ -23,23 +23,72 @@
 
 var num_buttons = 0;
 
+function demo () {
+  // while(true) {
+    var buttons_container = $( "div#" + buttons_containerID );
+    if( buttons_container.is( ":empty" ) )
+    {
+      console.log("no buttons available.");
+    } else {
+      var cur_button_num = Math.floor((Math.random() * (num_buttons)));
+      console.log("there are " + num_buttons + " buttons on this page for the parent circle. Selecting button " + cur_button_num + ".");
+      var outer_button = $( "#button" + cur_button_num );
+      outer_button.click();
+      transitionToInner();
+      // wait 7 seconds then start demo of inner model
+      function transitionToInner() {
+        setTimeout(function() {
+          buttons_container = $( "div#" + buttons_containerID );
+          if( buttons_container.is( ":empty" ) )
+          {
+            console.log("no buttons available.");
+          } else {
+            var i = 0;
+
+            function showInnerAbstracts() {
+              setTimeout(function() {
+                cur_button_num = Math.floor((Math.random() * (num_buttons)));
+                console.log("there are " + num_buttons + " buttons on this page for the inner circle. Selecting button " + cur_button_num + ".");
+                var inner_button = $( "#button" + cur_button_num );
+                inner_button.click();
+                setTimeout(function() {
+                  console.log("closing modal");
+                  $("#" + modalID).modal('hide');
+                  ++i;
+                  // this number is subject to change.
+                  // this is the number of abstracts to be shown per subject area
+                  if (i < num_buttons / 5) {
+                    showInnerAbstracts();
+                  } else {
+                    console.log("calling transitionToOuter");
+                    transitionToOuter();
+                  }
+                }, 7000);
+
+              }, 4000)
+            }
+            showInnerAbstracts();
+          }
+        }, 7000);
+      }
+
+      function transitionToOuter() {
+        var inner_circle = $( "div#" + sunburst_containerID + " circle:last" );
+        inner_circle.click();
+        console.log("after inner circle click");
+      }
+    }
+  // }
+}
+
 
 $(document).ready ( function () {
-  var delayInMilliseconds = 5000; //10 seconds
-  setTimeout(function() {
-    // while(true) {
-      var buttons_container = $( "div#" + buttons_containerID );
-      if( buttons_container.is( ":empty" ) )
-      {
-        console.log("no buttons available.");
-      } else {
-        var cur_button_num = Math.floor((Math.random() * (num_buttons)));
-        console.log("there are " + num_buttons + " buttons on this page. Selecting button " + cur_button_num + ".");
-        var outer_button = $( "#button" + cur_button_num );
-        outer_button.click();
-      }
-    // }
+  // CHANGE THIS UPON ROLL OUT.
+  // 15 minutes?
+  var delayInMilliseconds = 5000; // 5 seconds
 
+  setTimeout(function() {
+    demo();
   }, delayInMilliseconds);
 });
 
