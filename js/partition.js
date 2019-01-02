@@ -599,7 +599,14 @@ d3.json("data.json").then( function( data ) {
     }
 
     function transitionToOuter() {
-      clicked(button.parent);
+      console.log("in transitionToOuter function");
+      clicked(button.parent.parent);
+      num_buttons = currentArc.children.length;
+      var cur_button_num = Math.floor((Math.random() * (num_buttons)));
+      var button = currentArc.children[cur_button_num];
+      console.log("selecting button number " + cur_button_num + " from the outer circle...");
+      clicked( button );
+      transitionToInner();
     }
 
     // clicked( button.parent);
