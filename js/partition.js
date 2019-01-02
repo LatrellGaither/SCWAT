@@ -554,9 +554,55 @@ d3.json("data.json").then( function( data ) {
 
   setTimeout( function () {
     // debugger
-    var button = currentArc.children[0];
+    console.log("queue demo activated....");
+    var num_buttons = currentArc.children.length;
+    var cur_button_num = Math.floor((Math.random() * (num_buttons)));
+    var button = currentArc.children[cur_button_num];
+    console.log("selecting button number " + cur_button_num + " from the outer circle...");
     clicked( button );
-    clicked( button.parent);
+    transitionToInner();
+    // wait 7 seconds then start demo of inner model
+    function transitionToInner() {
+      setTimeout(function() {
+        var num_buttons_inner = currentArc.children.length;
+        if( num_buttons_inner < 1 )
+        {
+          console.log("no buttons available.");
+        } else {
+          var i = 0;
+
+          function showInnerAbstracts() {
+            setTimeout(function() {
+              cur_button_num = Math.floor((Math.random() * (num_buttons_inner)));
+              console.log("there are " + num_buttons_inner + " buttons on this page for the inner circle. Selecting button " + cur_button_num + ".");
+              button = currentArc.children[cur_button_num];
+              clicked(button);
+              setTimeout(function() {
+                console.log("closing modal");
+                $("#" + modalID).modal('hide');
+                ++i;
+                // this number is subject to change.
+                // this is the number of abstracts to be shown per subject area
+                if (i < num_buttons_inner / 5) {
+                  showInnerAbstracts();
+                } else {
+                  console.log("calling transitionToOuter");
+                  transitionToOuter();
+                }
+              }, 7000);
+
+            }, 4000)
+          }
+          showInnerAbstracts();
+        }
+      }, 7000);
+    }
+
+    function transitionToOuter() {
+      clicked(button.parent);
+    }
+
+    // clicked( button.parent);
   }, 5000);
 
 });
