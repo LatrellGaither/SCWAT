@@ -587,7 +587,7 @@ d3.json("data.json").then( function( data ) {
                   showInnerAbstracts();
                 } else {
                   console.log("calling transitionToOuter");
-                  transitionToOuter();
+                  transitionToOuter(button);
                 }
               }, 7000);
 
@@ -598,15 +598,18 @@ d3.json("data.json").then( function( data ) {
       }, 7000);
     }
 
-    function transitionToOuter() {
-      console.log("in transitionToOuter function");
+    function transitionToOuter(button) {
+      console.log("in transitionToOuter function: " + button);
       clicked(button.parent.parent);
-      num_buttons = currentArc.children.length;
-      var cur_button_num = Math.floor((Math.random() * (num_buttons)));
-      var button = currentArc.children[cur_button_num];
-      console.log("selecting button number " + cur_button_num + " from the outer circle...");
-      clicked( button );
-      transitionToInner();
+      // wait 5 seconds before entering into another field of science.
+      setTimeout(function() {
+        num_buttons = currentArc.children.length;
+        var cur_button_num = Math.floor((Math.random() * (num_buttons)));
+        var button = currentArc.children[cur_button_num]
+        console.log("selecting button number " + cur_button_num + " from the outer circle...");
+        clicked( button );
+        transitionToInner();
+      }, 5000);
     }
 
     // clicked( button.parent);
