@@ -20,87 +20,6 @@
 * ==========================================================================
 */
 
-
-var num_buttons = 0;
-
-function demo () {
-  // while(true) {
-    var buttons_container = $( "div#" + buttons_containerID );
-    if( buttons_container.is( ":empty" ) )
-    {
-      console.log("no buttons available.");
-    } else {
-      var cur_button_num = Math.floor((Math.random() * (num_buttons)));
-      console.log("there are " + num_buttons + " buttons on this page for the parent circle. Selecting button " + cur_button_num + ".");
-      var outer_button = $( "#button" + cur_button_num );
-      outer_button.click();
-      transitionToInner();
-      // wait 7 seconds then start demo of inner model
-      function transitionToInner() {
-        setTimeout(function() {
-          buttons_container = $( "div#" + buttons_containerID );
-          if( buttons_container.is( ":empty" ) )
-          {
-            console.log("no buttons available.");
-          } else {
-            var i = 0;
-
-            function showInnerAbstracts() {
-              setTimeout(function() {
-                cur_button_num = Math.floor((Math.random() * (num_buttons)));
-                console.log("there are " + num_buttons + " buttons on this page for the inner circle. Selecting button " + cur_button_num + ".");
-                var inner_button = $( "#button" + cur_button_num );
-                inner_button.click();
-                setTimeout(function() {
-                  console.log("closing modal");
-                  $("#" + modalID).modal('hide');
-                  ++i;
-                  // this number is subject to change.
-                  // this is the number of abstracts to be shown per subject area
-                  if (i < num_buttons / 5) {
-                    showInnerAbstracts();
-                  } else {
-                    console.log("calling transitionToOuter");
-                    transitionToOuter();
-                  }
-                }, 7000);
-
-              }, 4000)
-            }
-            showInnerAbstracts();
-          }
-        }, 7000);
-      }
-
-      function transitionToOuter() {
-        var inner_circle = $( "div#" + sunburst_containerID + " circle:last" );
-        inner_circle.click();
-
-        console.log("after inner circle click. Inner circle contents: " + inner_circle.text());
-      }
-    }
-  // }
-}
-
-
-$(document).ready ( function () {
-  // setTimeout( function () {
-  //   // debugger
-  //   $("circle").click();
-  // }, 2000);
-
-  // var inner_circle = $( "div#" + sunburst_containerID + " circle:last" );
-  // inner_circle.click();
-  // console.log("after inner circle click. Inner circle contents: " + inner_circle.text());
-  // CHANGE THIS UPON ROLL OUT.
-  // 15 minutes?
-  // var delayInMilliseconds = 5000; // 5 seconds
-  //
-  // setTimeout(function() {
-  //   demo();
-  // }, delayInMilliseconds);
-});
-
 /*
     ID's of important elements on page. This makes it easier to select them by applying them and changing
     them once here instead of having to remember it all the time.
@@ -552,68 +471,66 @@ d3.json("data.json").then( function( data ) {
 	}
 	clicked( root );
 
-  setTimeout( function () {
-    // debugger
-    console.log("queue demo activated....");
-    var num_buttons = currentArc.children.length;
-    var cur_button_num = Math.floor((Math.random() * (num_buttons)));
-    var button = currentArc.children[cur_button_num];
-    console.log("selecting button number " + cur_button_num + " from the outer circle...");
-    clicked( button );
-    transitionToInner();
-    // wait 7 seconds then start demo of inner model
-    function transitionToInner() {
-      setTimeout(function() {
-        var num_buttons_inner = currentArc.children.length;
-        if( num_buttons_inner < 1 )
-        {
-          console.log("no buttons available.");
-        } else {
-          var i = 0;
+  // demo is automatically activated after 5 seconds.
+  // Going to figure out different ways to implement this.
+  runDemo();
 
-          function showInnerAbstracts() {
-            setTimeout(function() {
-              cur_button_num = Math.floor((Math.random() * (num_buttons_inner)));
-              console.log("there are " + num_buttons_inner + " buttons on this page for the inner circle. Selecting button " + cur_button_num + ".");
-              button = currentArc.children[cur_button_num];
-              clicked(button);
+  function runDemo() {
+    setTimeout( function () {
+      console.log("queue demo activated....");
+      var num_buttons = currentArc.children.length;
+      var cur_button_num = Math.floor((Math.random() * (num_buttons)));
+      var button = currentArc.children[cur_button_num];
+      console.log("selecting button number " + cur_button_num + " from the outer circle...");
+      clicked( button );
+      transitionToInner();
+      // wait 7 seconds then start demo of inner model
+      function transitionToInner() {
+        setTimeout(function() {
+          var num_buttons_inner = currentArc.children.length;
+          if( num_buttons_inner < 1 ) {
+            console.log("no buttons available.");
+          } else {
+            var i = 0;
+            showInnerAbstracts();
+
+            function showInnerAbstracts() {
               setTimeout(function() {
-                console.log("closing modal");
-                $("#" + modalID).modal('hide');
-                ++i;
-                // this number is subject to change.
-                // this is the number of abstracts to be shown per subject area
-                if (i < num_buttons_inner / 5) {
-                  showInnerAbstracts();
-                } else {
-                  console.log("calling transitionToOuter");
-                  transitionToOuter(button);
-                }
-              }, 7000);
+                cur_button_num = Math.floor((Math.random() * (num_buttons_inner)));
+                console.log("there are " + num_buttons_inner + " buttons on this page for the inner circle. Selecting button " + cur_button_num + ".");
+                button = currentArc.children[cur_button_num];
+                clicked(button);
+                // closes the modal that is opened when an inner arc is clicked.
+                setTimeout(function() {
+                  console.log("closing modal");
+                  $("#" + modalID).modal('hide');
+                  ++i;
+                  // this number is subject to change.
+                  // this is the number of abstracts to be shown per subject area
+                  // it currently equates to 2 for the demo.
+                  if (i < num_buttons_inner / 5) {
+                    showInnerAbstracts();
+                  } else {
+                    console.log("calling transitionToOuter");
+                    transitionToOuter(button);
+                  }
+                }, 7000);
 
-            }, 4000)
+              }, 4000)
+            }
           }
-          showInnerAbstracts();
-        }
-      }, 7000);
-    }
+        }, 7000);
+      }
+    }, 5000);
+  }
 
-    function transitionToOuter(button) {
-      console.log("in transitionToOuter function: " + button);
-      clicked(button.parent.parent);
-      // wait 5 seconds before entering into another field of science.
-      setTimeout(function() {
-        num_buttons = currentArc.children.length;
-        var cur_button_num = Math.floor((Math.random() * (num_buttons)));
-        var button = currentArc.children[cur_button_num]
-        console.log("selecting button number " + cur_button_num + " from the outer circle...");
-        clicked( button );
-        transitionToInner();
-      }, 5000);
-    }
+  function transitionToOuter(button) {
+    console.log("in transitionToOuter function: " + button);
+    clicked(button.parent.parent);
+    // wait 5 seconds before entering into another field of science.
+    runDemo();
+  }
 
-    // clicked( button.parent);
-  }, 5000);
 
 });
 
