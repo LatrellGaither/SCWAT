@@ -264,18 +264,14 @@ d3.json("data.json").then( function( data ) {
 	        */
 	        if( p.data.project_abstract && p.data.project_abstract != "n/a" )
 	        {
-            console.log("before display_modal()");
 	            display_modal( p );
-              console.log("after display_modal()");
 	        }
 
 	        return;
     	}
 
-    console.log("before parent.datum");
 		parent.datum(p.parent || root);
 
-    console.log("before title_text transition");
 		title_text.transition()
 				  .duration( 750 )
 				  .style( "opacity", 0 )
@@ -284,7 +280,6 @@ d3.json("data.json").then( function( data ) {
 				  .style("opacity", 1)
 				  .text( p.data.name );
 
-    console.log("before percentage_text transition");
 		percentage_text.transition()
 				  .duration( 750 )
 				  .style( "opacity", 0 )
@@ -293,7 +288,6 @@ d3.json("data.json").then( function( data ) {
 				  .style("opacity", 1)
 				  .text( format_percentage( p.resources_used / totalCpu ) );
 
-    console.log("before jobs_text transition");
 		jobs_text.transition()
 				  .duration( 750 )
 				  .style( "opacity", 0 )
@@ -311,13 +305,11 @@ d3.json("data.json").then( function( data ) {
 			y1: Math.max( 0, d.y1 - p.depth )
 		});
 
-    console.log("g.transition()");
 		const t = g.transition().duration( 1250 );
 
 		// Transition the data on all arcs, even the ones that aren’t visible,
 		// so that if this transition is interrupted, entering arcs will start
 		// the next transition from the desired position.
-    console.log("before path.transition()");
 		path.transition(t)
 		  .tween("data", d =>
 		  {
@@ -331,7 +323,6 @@ d3.json("data.json").then( function( data ) {
 		  .attr("fill-opacity", d => arcVisible(d.target) ? 1 : 0)
 		  .attrTween("d", d => () => arc(d.current));
 
-      console.log("before populate_buttons()");
 		  populate_buttons( p );
 		  currentArc = p;
 
@@ -533,7 +524,6 @@ d3.json("data.json").then( function( data ) {
   }
 
   function innerModalProcess(num_buttons_inner, i, button, last_button_inner) {
-    console.log("in innerModalProcess()");
     try {
       setTimeout(function() {
 
@@ -546,12 +536,10 @@ d3.json("data.json").then( function( data ) {
 
         // this number is subject to change.
         // this is the number of abstracts to be shown per subject area
-        console.log("doing i comparison");
         if (i < num_buttons_inner / 5) {
           showInnerAbstracts(num_buttons_inner, i, last_button_inner);
         } else {
           setTimeout(function() {
-            console.log("calling transitionToOuter");
             transitionToOuter(button);
           // giving the modal a chance to close completely before opening another project
         }, 1500);
