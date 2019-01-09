@@ -474,17 +474,20 @@ d3.json("data.json").then( function( data ) {
   // demo is automatically activated after 5 seconds.
   // Going to figure out different ways to implement this.
   runDemo();
-
+  var last_button_outer = 0;
   function runDemo() {
     setTimeout( function () {
       console.log("queue demo activated....");
       var num_buttons = currentArc.children.length;
-      var cur_button_num = Math.floor((Math.random() * (num_buttons)));
+      var cur_button_num = 0;
+      while (cur_button_num == last_button_outer) {
+        cur_button_num = Math.floor((Math.random() * (num_buttons)));
+      }
       var button = currentArc.children[cur_button_num];
       console.log("selecting button number " + cur_button_num + " from the outer circle...");
       clicked( button );
       transitionToInner();
-      // wait 7 seconds then start demo of inner model
+      var last_button_inner = 0;
       function transitionToInner() {
         setTimeout(function() {
           var num_buttons_inner = currentArc.children.length;
@@ -495,32 +498,38 @@ d3.json("data.json").then( function( data ) {
             showInnerAbstracts();
 
             function showInnerAbstracts() {
+              cur_button_num = Math.floor((Math.random() * (num_buttons_inner)));
+              if (num_buttons_inner != 1) {
+                while (cur_button_num == last_button_inner) {
+                  cur_button_num = Math.floor((Math.random() * (num_buttons_inner)));
+                }
+              }
+              console.log("there are " + num_buttons_inner + " buttons on this page for the inner circle. Selecting button " + cur_button_num + ".");
+              button = currentArc.children[cur_button_num];
+              clicked(button);
+              // closes the modal that is opened when an inner arc is clicked.
               setTimeout(function() {
-                cur_button_num = Math.floor((Math.random() * (num_buttons_inner)));
-                console.log("there are " + num_buttons_inner + " buttons on this page for the inner circle. Selecting button " + cur_button_num + ".");
-                button = currentArc.children[cur_button_num];
-                clicked(button);
-                // closes the modal that is opened when an inner arc is clicked.
-                setTimeout(function() {
-                  console.log("closing modal");
-                  $("#" + modalID).modal('hide');
-                  ++i;
-                  // this number is subject to change.
-                  // this is the number of abstracts to be shown per subject area
-                  // it currently equates to 2 for the demo.
-                  if (i < num_buttons_inner / 5) {
-                    showInnerAbstracts();
-                  } else {
-                    console.log("calling transitionToOuter");
-                    transitionToOuter(button);
-                  }
-                }, 7000);
+                console.log("closing modal");
+                $("#" + modalID).modal('hide');
+                ++i;
+                // this number is subject to change.
+                // this is the number of abstracts to be shown per subject area
+                // it currently equates to 2 for the demo.
+                if (i < num_buttons_inner / 5) {
+                  showInnerAbstracts();
+                } else {
+                  console.log("calling transitionToOuter");
+                  transitionToOuter(button);
+                }
 
-              }, 4000)
+                // 7 seconds before closing modal
+              }, 7000);
             }
           }
-        }, 7000);
+          // wait 4 seconds before choosing current project
+        }, 4000);
       }
+      // wait 5 seconds before starting the demo
     }, 5000);
   }
 
