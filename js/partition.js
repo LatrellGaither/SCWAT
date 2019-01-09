@@ -20,6 +20,10 @@
 * ==========================================================================
 */
 
+$(document).ready ( function () {
+  alert("new version <1></1>");
+});
+
 /*
     ID's of important elements on page. This makes it easier to select them by applying them and changing
     them once here instead of having to remember it all the time.
@@ -260,14 +264,18 @@ d3.json("data.json").then( function( data ) {
 	        */
 	        if( p.data.project_abstract && p.data.project_abstract != "n/a" )
 	        {
+            console.log("before display_modal()");
 	            display_modal( p );
+              console.log("after display_modal()");
 	        }
 
 	        return;
     	}
 
+    console.log("before parent.datum");
 		parent.datum(p.parent || root);
 
+    console.log("before title_text transition");
 		title_text.transition()
 				  .duration( 750 )
 				  .style( "opacity", 0 )
@@ -276,7 +284,7 @@ d3.json("data.json").then( function( data ) {
 				  .style("opacity", 1)
 				  .text( p.data.name );
 
-
+    console.log("before percentage_text transition");
 		percentage_text.transition()
 				  .duration( 750 )
 				  .style( "opacity", 0 )
@@ -285,6 +293,7 @@ d3.json("data.json").then( function( data ) {
 				  .style("opacity", 1)
 				  .text( format_percentage( p.resources_used / totalCpu ) );
 
+    console.log("before jobs_text transition");
 		jobs_text.transition()
 				  .duration( 750 )
 				  .style( "opacity", 0 )
@@ -302,11 +311,13 @@ d3.json("data.json").then( function( data ) {
 			y1: Math.max( 0, d.y1 - p.depth )
 		});
 
+    console.log("g.transition()");
 		const t = g.transition().duration( 1250 );
 
 		// Transition the data on all arcs, even the ones that aren’t visible,
 		// so that if this transition is interrupted, entering arcs will start
 		// the next transition from the desired position.
+    console.log("before path.transition()");
 		path.transition(t)
 		  .tween("data", d =>
 		  {
@@ -320,6 +331,7 @@ d3.json("data.json").then( function( data ) {
 		  .attr("fill-opacity", d => arcVisible(d.target) ? 1 : 0)
 		  .attrTween("d", d => () => arc(d.current));
 
+      console.log("before populate_buttons()");
 		  populate_buttons( p );
 		  currentArc = p;
 
@@ -494,43 +506,62 @@ d3.json("data.json").then( function( data ) {
           if( num_buttons_inner < 1 ) {
             console.log("no buttons available.");
           } else {
-            var i = 0;
-            showInnerAbstracts();
-
-            function showInnerAbstracts() {
-              cur_button_num = Math.floor((Math.random() * (num_buttons_inner)));
-              if (num_buttons_inner != 1) {
-                while (cur_button_num == last_button_inner) {
-                  cur_button_num = Math.floor((Math.random() * (num_buttons_inner)));
-                }
-              }
-              console.log("there are " + num_buttons_inner + " buttons on this page for the inner circle. Selecting button " + cur_button_num + ".");
-              button = currentArc.children[cur_button_num];
-              clicked(button);
-              // closes the modal that is opened when an inner arc is clicked.
-              setTimeout(function() {
-                console.log("closing modal");
-                $("#" + modalID).modal('hide');
-                ++i;
-                // this number is subject to change.
-                // this is the number of abstracts to be shown per subject area
-                // it currently equates to 2 for the demo.
-                if (i < num_buttons_inner / 5) {
-                  showInnerAbstracts();
-                } else {
-                  console.log("calling transitionToOuter");
-                  transitionToOuter(button);
-                }
-
-                // 7 seconds before closing modal
-              }, 7000);
-            }
+            showInnerAbstracts(num_buttons_inner, 0, last_button_inner);
           }
           // wait 4 seconds before choosing current project
         }, 4000);
       }
       // wait 5 seconds before starting the demo
     }, 5000);
+  }
+
+  function showInnerAbstracts(num_buttons_inner, i, last_button_inner) {
+    var cur_button_num = Math.floor((Math.random() * (num_buttons_inner)));
+    if (num_buttons_inner != 1) {
+      while (cur_button_num == last_button_inner) {
+        cur_button_num = Math.floor((Math.random() * (num_buttons_inner)));
+      }
+    }
+    console.log("there are " + num_buttons_inner + " buttons on this page for the inner circle. Selecting button " + cur_button_num + ".");
+    var button = currentArc.children[cur_button_num];
+    setTimeout(function() {
+      clicked(button);
+      // closes the modal that is opened when an inner arc is clicked.
+      console.log("after button click");
+      innerModalProcess(num_buttons_inner, i, button, last_button_inner);
+    }, 2000);
+  }
+
+  function innerModalProcess(num_buttons_inner, i, button, last_button_inner) {
+    console.log("in innerModalProcess()");
+    try {
+      setTimeout(function() {
+
+        setTimeout(function() {
+          console.log("closing modal");
+          $("#" + modalID).modal('hide');
+          ++i;
+          // giving the modal a chance to close completely before opening another project
+        }, 1500);
+
+        // this number is subject to change.
+        // this is the number of abstracts to be shown per subject area
+        console.log("doing i comparison");
+        if (i < num_buttons_inner / 5) {
+          showInnerAbstracts(num_buttons_inner, i, last_button_inner);
+        } else {
+          setTimeout(function() {
+            console.log("calling transitionToOuter");
+            transitionToOuter(button);
+          // giving the modal a chance to close completely before opening another project
+        }, 1500);
+        }
+      // 7 seconds before closing modal
+      }, 7000);
+    }
+    catch(err) {
+      console.log(err.message);
+    }
   }
 
   function transitionToOuter(button) {
@@ -573,8 +604,11 @@ function display_modal( d )
     /*
         call the bootstrap modal function to make the modal appear
     */
-    $( "#" + modalID ).modal
-    ({
+    setTimeout(function() {
+      $( "#" + modalID ).modal
+      ({
 
-    });
+      });
+    }, 1000);
+
 }
